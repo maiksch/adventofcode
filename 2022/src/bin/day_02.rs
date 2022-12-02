@@ -1,21 +1,18 @@
-
-use std::cmp::Ordering;
 fn main() {
     let part_one = part_one();
     println!("{}", part_one);
+
     let part_two = part_two();
     println!("{}", part_two);
 }
 
 fn part_one() -> Score {
     include_str!("./day_02.txt")
-        .trim()
-        .split("\n")
+        .lines()
         .map(|round| {
-            let mut round = round.split(" ");
-            let opponent = Choice::from(round.next().unwrap());
-            let me = Choice::from(round.next().unwrap());
-
+            let round = round.split(" ").collect::<Vec<&str>>();
+            let opponent = Choice::from(round[0]);
+            let me = Choice::from(round[1]);
             get_score_part_one(me, opponent)
         })
         .sum()
@@ -24,9 +21,15 @@ fn part_one() -> Score {
 fn get_score_part_one(me: Choice, opponent: Choice) -> Score {
     let shape_score = Score::from(&me);
     let result = match (me, opponent) {
-        (x, y) if x == y => GameResult::Draw,
-        (x, y) if x < y => GameResult::Lose,
-        _ => GameResult::Win,
+        (Choice::Rock, Choice::Scissors) => Outcome::Win,
+        (Choice::Rock, Choice::Rock) => Outcome::Draw,
+        (Choice::Rock, Choice::Paper) => Outcome::Lose,
+        (Choice::Paper, Choice::Rock) => Outcome::Win,
+        (Choice::Paper, Choice::Paper) => Outcome::Draw,
+        (Choice::Paper, Choice::Scissors) => Outcome::Lose,
+        (Choice::Scissors, Choice::Paper) => Outcome::Win,
+        (Choice::Scissors, Choice::Scissors) => Outcome::Draw,
+        (Choice::Scissors, Choice::Rock) => Outcome::Lose,
     };
     let result_score = Score::from(&result);
 
@@ -35,30 +38,28 @@ fn get_score_part_one(me: Choice, opponent: Choice) -> Score {
 
 fn part_two() -> Score {
     include_str!("./day_02.txt")
-        .trim()
-        .split("\n")
+        .lines()
         .map(|round| {
-            let mut round = round.split(" ");
-            let opponent = Choice::from(round.next().unwrap());
-            let result = GameResult::from(round.next().unwrap());
-
+            let round = round.split(" ").collect::<Vec<&str>>();
+            let opponent = Choice::from(round[0]);
+            let result = Outcome::from(round[1]);
             get_score_part_two(opponent, result)
         })
         .sum()
 }
 
-fn get_score_part_two(opponent: Choice, result: GameResult) -> Score {
+fn get_score_part_two(opponent: Choice, result: Outcome) -> Score {
     let result_score = Score::from(&result);
     let me = match (opponent, result) {
-        (Choice::Rock, GameResult::Lose) => Choice::Scissors,
-        (Choice::Rock, GameResult::Draw) => Choice::Rock,
-        (Choice::Rock, GameResult::Win) => Choice::Paper,
-        (Choice::Paper, GameResult::Lose) => Choice::Rock,
-        (Choice::Paper, GameResult::Draw) => Choice::Paper,
-        (Choice::Paper, GameResult::Win) => Choice::Scissors,
-        (Choice::Scissors, GameResult::Lose) => Choice::Paper,
-        (Choice::Scissors, GameResult::Draw) => Choice::Scissors,
-        (Choice::Scissors, GameResult::Win) => Choice::Rock,
+        (Choice::Rock, Outcome::Lose) => Choice::Scissors,
+        (Choice::Rock, Outcome::Draw) => Choice::Rock,
+        (Choice::Rock, Outcome::Win) => Choice::Paper,
+        (Choice::Paper, Outcome::Lose) => Choice::Rock,
+        (Choice::Paper, Outcome::Draw) => Choice::Paper,
+        (Choice::Paper, Outcome::Win) => Choice::Scissors,
+        (Choice::Scissors, Outcome::Lose) => Choice::Paper,
+        (Choice::Scissors, Outcome::Draw) => Choice::Scissors,
+        (Choice::Scissors, Outcome::Win) => Choice::Rock,
     };
     let choice_score = Score::from(&me);
 
@@ -71,43 +72,13 @@ enum Choice {
     Scissors,
 }
 
-impl PartialOrd for Choice {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match (self, other) {
-            (Choice::Rock, Choice::Scissors) => Some(Ordering::Greater),
-            (Choice::Rock, Choice::Rock) => Some(Ordering::Equal),
-            (Choice::Rock, Choice::Paper) => Some(Ordering::Less),
-            (Choice::Paper, Choice::Rock) => Some(Ordering::Greater),
-            (Choice::Paper, Choice::Paper) => Some(Ordering::Equal),
-            (Choice::Paper, Choice::Scissors) => Some(Ordering::Less),
-            (Choice::Scissors, Choice::Paper) => Some(Ordering::Greater),
-            (Choice::Scissors, Choice::Scissors) => Some(Ordering::Equal),
-            (Choice::Scissors, Choice::Rock) => Some(Ordering::Less),
-        }
-    }
-}
-
-impl PartialEq for Choice {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Choice::Rock, Choice::Rock) => true,
-            (Choice::Paper, Choice::Paper) => true,
-            (Choice::Scissors, Choice::Scissors) => true,
-            _ => false,
-        }
-    }
-}
-
 impl From<&str> for Choice {
     fn from(value: &str) -> Choice {
         match value {
-            "A" => Choice::Rock,
-            "B" => Choice::Paper,
-            "C" => Choice::Scissors,
-            "X" => Choice::Rock,
-            "Y" => Choice::Paper,
-            "Z" => Choice::Scissors,
-            _ => panic!("invalid choice"),
+            "A" | "X" => Choice::Rock,
+            "B" | "Y" => Choice::Paper,
+            "C" | "Z" => Choice::Scissors,
+            _ => unimplemented!("invalid choice"),
         }
     }
 }
@@ -124,29 +95,29 @@ impl From<&Choice> for Score {
     }
 }
 
-enum GameResult {
+enum Outcome {
     Win,
     Lose,
     Draw,
 }
 
-impl From<&str> for GameResult {
-    fn from(str: &str) -> GameResult {
-        match str {
-            "X" => GameResult::Lose,
-            "Y" => GameResult::Draw,
-            "Z" => GameResult::Win,
-            _ => panic!("invalid result"),
+impl From<&str> for Outcome {
+    fn from(value: &str) -> Outcome {
+        match value {
+            "X" => Outcome::Lose,
+            "Y" => Outcome::Draw,
+            "Z" => Outcome::Win,
+            _ => unimplemented!("invalid outcome"),
         }
     }
 }
 
-impl From<&GameResult> for Score {
-    fn from(result: &GameResult) -> Score {
+impl From<&Outcome> for Score {
+    fn from(result: &Outcome) -> Score {
         match result {
-            GameResult::Lose => 0,
-            GameResult::Draw => 3,
-            GameResult::Win => 6,
+            Outcome::Lose => 0,
+            Outcome::Draw => 3,
+            Outcome::Win => 6,
         }
     }
 }
