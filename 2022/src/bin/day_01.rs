@@ -2,20 +2,21 @@ use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
 fn main() {
-    let file = File::open("input/day_01.txt").expect("Input could not be openend");
+    let file = File::open("./src/bin/day_01.txt").expect("Input could not be openend");
     let reader = BufReader::new(file);
 
     let mut sum = vec![];
     let mut calories_counter = 0;
 
     for line in reader.lines().map(|l| l.unwrap()) {
-        if line.is_empty() {
-            sum.push(calories_counter);
-            calories_counter = 0;
-            continue;
+        let calories = str::parse::<usize>(&line);
+
+        if calories.is_ok() {
+            calories_counter += calories.unwrap();
         }
-        let calories = str::parse::<usize>(&line).expect("Calories were not a number");
-        calories_counter = calories_counter + calories;
+
+        sum.push(calories_counter);
+        calories_counter = 0;
     }
 
     sum.sort_by(|a, b| b.cmp(a));
