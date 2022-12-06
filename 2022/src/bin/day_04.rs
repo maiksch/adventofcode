@@ -1,6 +1,5 @@
 fn main() {
-    let input = include_str!("day_04.txt");
-
+    let input = std::fs::read_to_string("./src/bin/day_04.txt").expect("file");
     println!("{}", part_one(&input));
     println!("{}", part_two(&input));
 }
@@ -8,10 +7,11 @@ fn main() {
 fn part_one(input: &str) -> u64 {
     input
         .lines()
-        .map(|line| line.split(",").collect::<Vec<&str>>())
         .map(|line| {
-            let left = Sections::from(line[0]);
-            let right = Sections::from(line[1]);
+            let (left, right) = line.split_once(",").expect("split comma");
+            let left = Sections::from(left);
+            let right = Sections::from(right);
+
             left.contains(&right) || right.contains(&left)
         })
         .map(|contains| match contains {
@@ -24,10 +24,11 @@ fn part_one(input: &str) -> u64 {
 fn part_two(input: &str) -> u64 {
     input
         .lines()
-        .map(|line| line.split(",").collect::<Vec<&str>>())
         .map(|line| {
-            let left = Sections::from(line[0]);
-            let right = Sections::from(line[1]);
+            let (left, right) = line.split_once(",").expect("split comma");
+            let left = Sections::from(left);
+            let right = Sections::from(right);
+
             left.overlap(&right) || right.overlap(&left)
         })
         .map(|contains| match contains {
