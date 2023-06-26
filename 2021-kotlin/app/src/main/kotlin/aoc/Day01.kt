@@ -1,10 +1,12 @@
+package aoc
+
 fun day_01() {
   var input = readFile("day01.txt")
   println(part_one(input))
   println(part_two(input))
 }
 
-fun part_one(input: List<String>): Int {
+private fun part_one(input: List<String>): Int {
   return input
       .map { it.toInt() }
       .foldIndexed(
@@ -17,7 +19,7 @@ fun part_one(input: List<String>): Int {
       .first
 }
 
-fun part_two(input: List<String>): Int {
+private fun part_two(input: List<String>): Int {
   return input
       .map { it.toInt() }
       .windowed(3)

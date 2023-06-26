@@ -1,7 +1,6 @@
 package aoc
 
-import day_01
-
 fun main() {
-    day_01()
+    // day_01()
+    day_02()
 }
