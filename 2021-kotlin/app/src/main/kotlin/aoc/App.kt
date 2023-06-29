@@ -1,7 +1,8 @@
 package aoc
 
 fun main() {
-    // day_01()
-//    day_02()
-    day03()
+     // day01()
+     // day_02()
+     // day03()
+     day04()
 }
