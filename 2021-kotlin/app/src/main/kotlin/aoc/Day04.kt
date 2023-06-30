@@ -3,10 +3,10 @@ package aoc
 fun day04() {
     val input = readFile("day04.txt")
 
+    // Read first line
     val numbers = input[0]
         .split(",")
         .map(String::toInt)
-    println(numbers)
 
     // Parse Input and create Boards
     val boards = input
