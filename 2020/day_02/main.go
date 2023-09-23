@@ -10,10 +10,9 @@ import (
 )
 
 func main() {
-	input := util.ReadInput("./part_one.txt")
-	fmt.Printf("Part One: %d\n", PartOne(input))
+	input := util.ReadInput("./input.txt")
 
-	input = util.ReadInput("./part_two.txt")
+	fmt.Printf("Part One: %d\n", PartOne(input))
 	fmt.Printf("Part Two: %d\n", PartTwo(input))
 }
 
